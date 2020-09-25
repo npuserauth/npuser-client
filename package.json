@@ -9,7 +9,8 @@
     "build": "npm run lint && tsc",
     "lint": "eslint ./src",
     "run": "node index.ts",
-    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts"
+    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
+    "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
   },
   "repository": {
     "type": "git",
@@ -42,7 +43,14 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^8.1.3",
+    "nyc": "^15.1.0",
     "ts-mocha": "^7.0.0",
     "typescript": "^4.0.3"
+  },
+  "nyc": {
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   }
 }

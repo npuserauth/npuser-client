@@ -24,9 +24,9 @@ async function send (opts, payload, clientId,  sharedSecretKeyString) {
     request.end()
   })
 }
-type IValidated = {
+type AuthResponsePacket = {
   message: string;
-  vcode: string; // only here temporarily for initial development only
+  code: string; // only here temporarily for initial development only
   token: string;
 }
 
@@ -34,23 +34,27 @@ type AuthRequestPacket = {
   email: string;
 }
 
-async function sendAuth (userEmailAddress, clientId,  sharedSecretKeyString) {
+async function sendAuth (userEmailAddress, clientId,  sharedSecretKeyString): AuthResponsePacket {
   const opts = {
     host: 'localhost',
     path: '/apiuser',
     port: '27001',
     method: 'POST'
   }
-  const authRequest:AuthRequestPacket = { email: userEmailAddress }
-  const d: IValidated = await send(opts, authRequest, clientId,  sharedSecretKeyString) as IValidated
+  const authRequest: AuthRequestPacket = {email: userEmailAddress}
+  const d: AuthResponsePacket = await send(opts, authRequest, clientId, sharedSecretKeyString) as AuthResponsePacket
   console.log('sent auth got: ', d)
-  // Take the results and extract the jwt. Also get the for-dev-only vcode.
-  // Send the jwt and vcode (which will eventually be provided by the user reading their email)
   // To invalidate the request send a bogus v code
   // d.vcode = 'ddd'
+  return d
+}
+
+async function sendValidation(userEmailAddress, token, vCode, clientId,  sharedSecretKeyString) {
+  // Take the results and extract the jwt. Also get the for-dev-only vcode.
+  // Send the jwt and vcode (which will eventually be provided by the user reading their email)
   const validatePayload = {jwt: d.jwt, code: d.vcode}
   console.log('send validation payload', validatePayload)
-  const opts2 = Object.assi.gitignoregn(opts)
+  const opts2 = Object.assign(opts)
   opts2.path = '/apiuser/validate'
   const v = await send(opts2, validatePayload, clientId,  sharedSecretKeyString)
   // console.log('sent validate got: ', v)

@@ -4,6 +4,8 @@ src/debug.sh
 .env*
 caddy/site/
 dist/*
+coverage
+.nyc_output
 
 ### Node ###
 # Logs
