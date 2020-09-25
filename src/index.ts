@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken'
 import http from 'http'
 
+// Add comment to fake a PR to see if Travis runs
+
 export function signPayload (payloadObject, clientId,  sharedSecretKeyString) {
   let tkn = jwt.sign(payloadObject, sharedSecretKeyString)
   return {clientId: clientId, data: tkn}
