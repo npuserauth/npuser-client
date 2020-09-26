@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "Quick way to use and develop the npuser-client module",
   "main": "np.tryout.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run" : "node np.tryout.js"
   },
   "dependencies": {
-    "npuser-client": "^1.0.0"
+    "npuser-client": "^1.0.3"
   }
 }

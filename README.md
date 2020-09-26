@@ -4,4 +4,7 @@
 
 See https://github.com/bryan-gilbert/npuser
 
-
+```
+npm version patch
+git push --follow-tags origin
+```

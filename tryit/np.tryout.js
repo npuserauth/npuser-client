@@ -1,4 +1,4 @@
-import { NoPasswordAuthorizer } from '../src/index'
+import NoPasswordAuthorizer from 'npuser-client'
 
 async function getCode () {
   const readline = require('readline')
