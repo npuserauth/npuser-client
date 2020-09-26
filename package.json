@@ -2,16 +2,6 @@
   "name": "npuser-client",
   "version": "1.0.2",
   "description": "Module for a server that uses the npuser service (the no password authentication service).",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "scripts": {
-    "type": "module",
-    "build": "npm run lint && tsc",
-    "lint": "eslint ./src",
-    "run": "ts-node src/index.ts",
-    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
-    "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
-  },
   "repository": {
     "type": "git",
     "url": "npuser-client"
@@ -26,6 +16,16 @@
   ],
   "author": "Bryan Gilbert",
   "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "type": "module",
+    "build": "npm run lint && tsc",
+    "lint": "eslint ./src",
+    "run": "ts-node src/index.ts",
+    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
+    "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
+  },
   "dependencies": {
     "http": "0.0.1-security",
     "jsonwebtoken": "^8.5.1"
@@ -34,6 +34,7 @@
     "@types/expect": "^24.3.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "14.0.13",
+    "@types/jsonwebtoken": "^8.5.0",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
     "eslint": "^7.9.0",
@@ -47,11 +48,5 @@
     "ts-mocha": "^7.0.0",
     "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
-  },
-  "nyc": {
-    "reporter": [
-      "lcov",
-      "text"
-    ]
   }
 }
