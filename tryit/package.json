@@ -1,0 +1,12 @@
+{
+  "name": "tryit",
+  "version": "1.0.0",
+  "description": "Quick way to use and develop the npuser-client module",
+  "main": "np.tryout.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "npuser-client": "^1.0.0"
+  }
+}

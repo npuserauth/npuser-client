@@ -18,12 +18,13 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "type": "module",
   "scripts": {
-    "type": "module",
     "build": "npm run lint && tsc",
     "lint": "eslint ./src",
     "run": "ts-node src/index.ts",
-    "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
+    "test": "mocha test/**/*.spec.js",
+    "test-ts": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
     "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
   },
   "dependencies": {

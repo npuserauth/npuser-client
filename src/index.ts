@@ -18,6 +18,12 @@ type AuthRequestPacket = {
     email: string;
 }
 
+type ValidationRequestPacket = {
+    email: string;
+    code: string;
+    token: string;
+}
+
 class NoPasswordAuthorizer {
     private readonly cfg: NoPasswordAuthorizerConfig;
 
@@ -55,34 +61,20 @@ class NoPasswordAuthorizer {
       const authRequest: AuthRequestPacket = { email: userEmailAddress }
       const d: AuthResponsePacket = await this.sendPost(url, authRequest) as AuthResponsePacket
       console.log('sent auth got: ', d)
-      // To invalidate the request send a bogus v code
-      // d.vcode = 'ddd'
       return d
     }
 
     async sendValidation (userEmailAddress, token, vCode) {
       const url = this.cfg.baseUrl + '/apiuser/validate'
-      // eslint-disable-next-line no-unused-vars
-      const authRequest: AuthRequestPacket = { email: userEmailAddress }
-      // Take the results and extract the jwt. Also get the for-dev-only vcode.
-      // Send the jwt and vcode (which will eventually be provided by the user reading their email)
-      const validatePayload = {}
-      const v = await this.sendPost(url, validatePayload)
-      // console.log('sent validate got: ', v)
+      const validateRequest: ValidationRequestPacket = {
+        email: userEmailAddress,
+        code: vCode,
+        token: token
+      }
+      const v = await this.sendPost(url, validateRequest)
+      console.log('sent validate got: ', v)
       return v
     }
 }
 
 export default NoPasswordAuthorizer
-
-async function f1 () {
-  const np = new NoPasswordAuthorizer({
-    baseUrl: 'http://localhost:27001',
-    clientId: 'client id with np user',
-    sharedSecretKey: 'some secret shared with np user'
-  })
-  const d = await np.sendAuth('bg@g.c')
-  console.log('f1 ', d)
-}
-
-f1()
