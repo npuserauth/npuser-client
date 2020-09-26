@@ -4,11 +4,11 @@
   "description": "Module for a server that uses the npuser service (the no password authentication service).",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "scripts": {
+    "type": "module",
     "build": "npm run lint && tsc",
     "lint": "eslint ./src",
-    "run": "node index.ts",
+    "run": "ts-node src/index.ts",
     "test": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
     "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
   },
@@ -45,6 +45,7 @@
     "mocha": "^8.1.3",
     "nyc": "^15.1.0",
     "ts-mocha": "^7.0.0",
+    "ts-node": "^9.0.0",
     "typescript": "^4.0.3"
   },
   "nyc": {

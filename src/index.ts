@@ -1,30 +1,10 @@
 import jwt from 'jsonwebtoken'
-import http from 'http'
+const http = require('http')
 
-// Add comment to fake a PR to see if Travis runs
-
-export function signPayload (payloadObject, clientId,  sharedSecretKeyString) {
-  let tkn = jwt.sign(payloadObject, sharedSecretKeyString)
-  return {clientId: clientId, data: tkn}
-}
-
-async function send (opts, payload, clientId,  sharedSecretKeyString) {
-  return new Promise((resolve, reject) => {
-    const request = http.request(opts, response => {
-      let str = ''
-      response.on('data', chunk => {
-        str += chunk
-      })
-
-      response.on('end', () => {
-        const json = JSON.parse(str)
-        resolve(json)
-      })
-    })
-    request.setHeader('Content-Type', 'application/json')
-    request.write(signPayload(payload, clientId,  sharedSecretKeyString))
-    request.end()
-  })
+type NoPasswordAuthorizerConfig = {
+  baseUrl: string; // hhtp://localhost:27001 without trailing slash
+  clientId: string;
+  sharedSecretKey: string;
 }
 type AuthResponsePacket = {
   message: string;
@@ -36,37 +16,69 @@ type AuthRequestPacket = {
   email: string;
 }
 
-async function sendAuth (userEmailAddress, clientId,  sharedSecretKeyString): AuthResponsePacket {
-  const opts = {
-    host: 'localhost',
-    path: '/apiuser',
-    port: '27001',
-    method: 'POST'
+class NoPasswordAuthorizer {
+  private readonly cfg: NoPasswordAuthorizerConfig;
+  constructor(props: NoPasswordAuthorizerConfig) {
+    this.cfg = props
   }
-  const authRequest: AuthRequestPacket = {email: userEmailAddress}
-  const d: AuthResponsePacket = await send(opts, authRequest, clientId, sharedSecretKeyString) as AuthResponsePacket
-  console.log('sent auth got: ', d)
-  // To invalidate the request send a bogus v code
-  // d.vcode = 'ddd'
-  return d
+  async sendPost (url, payload) {
+    const opts = { method: 'POST' }
+    const { clientId, sharedSecretKey } = this.cfg
+    return new Promise((resolve, reject) => {
+      const request = http.request(url, opts, response => {
+        let str = ''
+        response.on('data', chunk => {
+          str += chunk
+        })
+
+        response.on('end', () => {
+          const json = JSON.parse(str)
+          resolve(json)
+        })
+      })
+      const signedPayload = {
+        clientId: clientId,
+        data: jwt.sign(payload, sharedSecretKey)
+      }
+      request.setHeader('Content-Type', 'application/json')
+      request.write(JSON.stringify(signedPayload))
+      request.end()
+    })
+  }
+
+
+  async sendAuth (userEmailAddress): Promise<AuthResponsePacket> {
+    const url = this.cfg.baseUrl + '/apiuser'
+    const authRequest: AuthRequestPacket = {email: userEmailAddress}
+    const d: AuthResponsePacket = await this.sendPost(url, authRequest) as AuthResponsePacket
+    console.log('sent auth got: ', d)
+    // To invalidate the request send a bogus v code
+    // d.vcode = 'ddd'
+    return d
+  }
+
+  async sendValidation(userEmailAddress, token, vCode) {
+    const url = this.cfg.baseUrl + '/apiuser/validate'
+    const authRequest: AuthRequestPacket = {email: userEmailAddress}
+    // Take the results and extract the jwt. Also get the for-dev-only vcode.
+    // Send the jwt and vcode (which will eventually be provided by the user reading their email)
+    const validatePayload = {}
+    const v = await this.sendPost(url, validatePayload)
+    // console.log('sent validate got: ', v)
+    return v
+  }
+
 }
 
-async function sendValidation(userEmailAddress, token, vCode, clientId,  sharedSecretKeyString) {
-  // Take the results and extract the jwt. Also get the for-dev-only vcode.
-  // Send the jwt and vcode (which will eventually be provided by the user reading their email)
-  const validatePayload = {jwt: d.jwt, code: d.vcode}
-  console.log('send validation payload', validatePayload)
-  const opts2 = Object.assign(opts)
-  opts2.path = '/apiuser/validate'
-  const v = await send(opts2, validatePayload, clientId,  sharedSecretKeyString)
-  // console.log('sent validate got: ', v)
-  return v
-}
+export default NoPasswordAuthorizer
 
 async function f1 () {
-  const clientId = "client id with np user"
-  const sharedSecretKeyString ="some secret shared with np user"
-  const d = await sendAuth('bg@g.c', clientId,  sharedSecretKeyString)
+  const np = new NoPasswordAuthorizer({
+    baseUrl: 'http://localhost:27001',
+    clientId: 'client id with np user',
+    sharedSecretKey: 'some secret shared with np user'
+  })
+  const d = await np.sendAuth('bg@g.c')
   console.log('f1 ', d)
 }
 
