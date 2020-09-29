@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "types": ["mocha", "node"],
+    "types": ["node"],
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "./dist"
