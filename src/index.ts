@@ -1,23 +1,23 @@
 import jwt from 'jsonwebtoken'
 import http from 'http'
 
-type NoPasswordAuthorizerConfig = {
+export type NoPasswordAuthorizerConfig = {
     baseUrl: string; // hhtp://localhost:27001 without trailing slash
     clientId: string;
     sharedSecretKey: string;
 }
 
-type AuthResponsePacket = {
+export type AuthResponsePacket = {
     message: string;
     code: string; // only here temporarily for initial development only
     token: string;
 }
 
-type AuthRequestPacket = {
+export type AuthRequestPacket = {
     email: string;
 }
 
-type ValidationRequestPacket = {
+export type ValidationRequestPacket = {
     email: string;
     code: string;
     token: string;
@@ -76,5 +76,4 @@ class NoPasswordAuthorizer {
     }
 }
 
-export default NoPasswordAuthorizer
-// module.exports = NoPasswordAuthorizer
+module.exports = NoPasswordAuthorizer

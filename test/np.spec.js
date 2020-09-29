@@ -1,4 +1,4 @@
-import NoPasswordAuthorizer from '../src/index'
+const NoPasswordAuthorizer = require('../dist/index')
 const nock = require('nock');
 const expect = require('chai').expect;
 
@@ -20,6 +20,9 @@ function authResponse() {
   }
 }
 
+const validationToken = 'tbd'
+const code = 'tbd'
+
 describe('Constructor test', () => {
 
   it('Should be able to create an instance', () => {
@@ -38,6 +41,19 @@ describe('Send auth request', () => {
 
     const r = await np.sendAuth(emailAddress)
     expect(r).exist
+  })
+});
+
+describe('Send validation request', () => {
+
+  it ('should be about to post validation', async () => {
+    let np = constructNP()
+    nock(hostUrl)
+    .post('/apiuser/validate')
+    .reply(200, authResponse());
+
+    const v = await np.sendValidation(emailAddress, validationToken, code)
+    expect(v).exist
   })
 });
 

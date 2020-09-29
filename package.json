@@ -23,6 +23,7 @@
     "lint": "eslint ./src/**",
     "run": "ts-node src/index.ts",
     "test": "ts-mocha -p tsconfig.json test/**/*.spec.ts",
+    "test:js": "mocha test/**/*.spec.js",
     "test:cov": "nyc ts-mocha -p tsconfig.json test/**/*.spec.ts",
     "version:up": "npm version patch",
     "prepare": "npm run build",
