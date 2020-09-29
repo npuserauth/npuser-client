@@ -18,14 +18,23 @@
   "license": "MIT",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "type": "module",
   "scripts": {
     "build": "npm run lint && tsc",
     "lint": "eslint ./src/**",
     "run": "ts-node src/index.ts",
-    "test": "mocha test/**/*.spec.js",
-    "test-ts": "ts-mocha -p tsconfig.json src/**/*.spec.ts",
-    "test:cov": "nyc ts-mocha -p tsconfig.json src/**/*.spec.ts"
+    "test": "ts-mocha -p tsconfig.json test/**/*.spec.ts",
+    "test:cov": "nyc ts-mocha -p tsconfig.json test/**/*.spec.ts",
+    "version:up": "npm version patch",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "postversion": "git push && git push --tags"
+  },
+  "comments": {
+    "prepublishOnly": "will run BEFORE prepare and ONLY on npm publish.  Here we will run our test and lint to make sure we don’t publish bad code",
+    "preversion": "will run before bumping a new package version. To be extra sure that we’re not bumping a version with bad code, why not run lint here as well?",
+    "version": "npm run format && git add -A src",
+    "postversion": "will run after the commit has been made. A perfect place for pushing the commit as well as the tag."
   },
   "dependencies": {
     "http": "0.0.1-security",
@@ -33,11 +42,12 @@
   },
   "devDependencies": {
     "@types/expect": "^24.3.0",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/mocha": "^8.0.3",
     "@types/node": "14.0.13",
-    "@types/jsonwebtoken": "^8.5.0",
     "@typescript-eslint/eslint-plugin": "^4.2.0",
     "@typescript-eslint/parser": "^4.2.0",
+    "chai": "^4.2.0",
     "eslint": "^7.9.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.22.0",
@@ -45,6 +55,7 @@
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "mocha": "^8.1.3",
+    "nock": "^13.0.4",
     "nyc": "^15.1.0",
     "ts-mocha": "^7.0.0",
     "ts-node": "^9.0.0",

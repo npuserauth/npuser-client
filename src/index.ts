@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
-
-const http = require('http')
+import http from 'http'
 
 type NoPasswordAuthorizerConfig = {
     baseUrl: string; // hhtp://localhost:27001 without trailing slash
@@ -78,3 +77,4 @@ class NoPasswordAuthorizer {
 }
 
 export default NoPasswordAuthorizer
+// module.exports = NoPasswordAuthorizer
