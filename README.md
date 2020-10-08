@@ -30,7 +30,7 @@ async function f1 () {
     clientId: 'client id with np user',
     sharedSecretKey: 'some secret shared with np user'
   })
-  const emailAddress = 'bg@g.c'
+  const emailAddress = 'someone@g.c'
   const d = await np.sendAuth(emailAddress)
   console.log('f1 ', d)
   const code = await getCode()
@@ -49,3 +49,5 @@ To bump the version
 npm version patch
 git push --follow-tags origin
 ```
+
+https://travis-ci.org/github/bryan-gilbert/npuser-client

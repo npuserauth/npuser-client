@@ -16,7 +16,7 @@ jobs:
       script: echo "Deploying to npm ..."
       deploy:
         provider: npm
-        email: bryan.gilbert@memsharp.com
+        email: info@npuser.org
         api_key:
           secure: eH/oCVm/L9ESagxnUrRCXTXSr3BFvCeuepGik2C3gF2wlqvmtjCdBuzqfjLcWyt9ziL++jeoj74n1X7ao//TIG8AwUm5vdI8H1vOZykie8ZC8ao/GayvOhvRLMn6ApSp13Zwb01PtXbUsTj08xiEnTbyzDx6UV0wrifEqz2+pWtKcT0BboIVBAUXytvBjRinEZ6UXDadzsrv/yQe86DRUBFf/mmh04HE/LLQVSnGqzh89FDfo3S4N+3tChAfb4DZo7YOFLst5m5h6qjqYz3t31+xcIgWQbzFOzfPeYMDWNI9AExDxMK+vt4WU0262tM7X01wB7FABqj+oCDQM/LjPLx8c+QIONW5g4LJ9RqMv+LP/p08EuhFgSF4IvuGkT5uPFqdRdVd/Qeplcya/gYNPMx1jg+I6U1eTLN3OVuOWPtInnS3RAivGvcaOBK1tc0paKkNagYD9jdCx5RSa8HVY54l/XJKWzUkweR285O2Hw0HRUoJmbbVDoIWKAZdRnIHL+Zxlbh/fXieVlMFUGys2Q7ycvpKgeEPVqt3/5sZjMns9Vt2xiCwFJyBvddjnKuFhgM0YpNhLusLmNKRBi2mXdb1/7rGmPoUfOeOwSb+vSPyEfA8TztZVjJA0MX7nFpcK7PekvDa/cYPZ8HW/mT/NKZnQFyXTR9aYnr8uhfIZDM=
         on:
