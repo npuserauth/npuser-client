@@ -5,7 +5,31 @@ authorization request to the npuser server. It then prompts the user, on the com
 to enter the verification code.  Get and enter the code. The sample app then sends the verification
 request which validates the user.
 
-## How to obtain the verification code for testing.
+## Configuration
+
+Copy the sample environment files into your local (not in git).
+```
+cp sample.dev.env .env.dev
+cp sample.prod.env .env.prod
+```
+
+The DEV sample should work as is with the defaults used by a locally running npuser authorization service.
+
+The PROD sample needs real client id and secret and email address.
+
+Adjust the .env files to suit your needs and run the sample ...
+```
+# dev
+npm run run
+
+#prod
+npm run run:prod
+```
+
+## How to obtain the verification code
+
+This sample application sends the authorization request.  You then need to find the 
+verification code the npuser authorization server creaetd.
 
 If you are running this as a developer of npuser then you can see the npuser server's 
 console output. The verification code is there. 
