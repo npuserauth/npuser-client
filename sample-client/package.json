@@ -6,7 +6,7 @@
   "scripts": {
     "watch": "webpack --watch --mode=development",
     "build": "webpack --mode=development && npm run run",
-    "run": "cp dev.env .env && node dist/main.js",
+    "run": "cp .env.dev .env && node dist/main.js",
     "run:prod": "cp .env.prod .env && node dist/main.js"
   },
   "dependencies": {
