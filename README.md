@@ -16,7 +16,6 @@ is to see the code in the ```sample-client``` folder.
 To bump the version
 ```
 npm version patch
-git push --follow-tags origin
 ```
 
 https://travis-ci.org/github/bryan-gilbert/npuser-client
