@@ -1,0 +1,22 @@
+{
+  "name": "sample-client",
+  "version": "1.0.0",
+  "description": "A simple Node JS script that acts like a npuser client.",
+  "main": "main.js",
+  "scripts": {
+    "watch": "webpack --watch --mode=development",
+    "build": "webpack --mode=development && npm run run",
+    "run": "cp dev.env .env && node dist/main.js",
+    "run:prod": "cp .env.prod .env && node dist/main.js"
+  },
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "npuser-client": "file:../../npuser-client",
+    "readline": "^1.3.0"
+  },
+  "devDependencies": {
+    "nodemon-webpack-plugin": "^4.3.2",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
+  }
+}

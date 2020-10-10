@@ -3,7 +3,7 @@ src/debug.sh
 .history
 .env*
 caddy/site/
-dist/*
+dist
 coverage
 .nyc_output
 
