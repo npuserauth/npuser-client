@@ -6,6 +6,7 @@ export type NoPasswordAuthorizerConfig = {
     silent: boolean; // default is to not show debug messages on console
     clientId: string;
     sharedSecretKey: string;
+    dev: boolean;
 }
 
 export type AuthResponsePacket = {
@@ -35,12 +36,18 @@ class NoPasswordAuthorizer {
   constructor (props: NoPasswordAuthorizerConfig) {
     this.cfg = props
     this.debug = props.silent !== undefined ? !props.silent : false
-    this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
+    if (props.dev) {
+      this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
+
+    } else {
+      this.baseUrl = this.cfg.baseUrl + '/api/' + URL_BASE_PATH
+    }
   }
 
   async sendPost (url, payload) {
     const opts = { method: 'POST' }
     const { clientId, sharedSecretKey } = this.cfg
+    console.log('npuser sendPost to', url)
     return new Promise((resolve, reject) => {
       const request = http.request(url, opts, response => {
         let str = ''
@@ -66,7 +73,8 @@ class NoPasswordAuthorizer {
 
   async sendAuth (userEmailAddress): Promise<AuthResponsePacket> {
     const authRequest: AuthRequestPacket = { email: userEmailAddress }
-    const authResponsePacket: AuthResponsePacket = await this.sendPost(this.baseUrl, authRequest) as AuthResponsePacket
+    const url = this.baseUrl
+    const authResponsePacket: AuthResponsePacket = await this.sendPost(url, authRequest) as AuthResponsePacket
     if (this.debug) {
       console.log('npuser client sent request to url', this.baseUrl)
       console.log('npuser client seeks to authorize', userEmailAddress)

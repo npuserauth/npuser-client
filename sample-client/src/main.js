@@ -1,4 +1,5 @@
 import NoPasswordAuthorizer from 'npuser-client'
+// import NoPasswordAuthorizer from '../../dist'
 import readline from 'readline'
 import config from './config-env'
 console.log('the env contains', config)
@@ -20,7 +21,9 @@ async function main () {
   const np = new NoPasswordAuthorizer({
     baseUrl: config.NPUSER_URL,
     clientId: config.CLIENT_ID,
-    sharedSecretKey: config.SECRET
+    sharedSecretKey: config.SECRET,
+    silent: false,
+    dev: true
   })
 
   const emailAddress = config.USER_EMAIL

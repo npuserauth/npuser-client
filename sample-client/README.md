@@ -1,6 +1,6 @@
 # Sample npuser client
 
-This sample NodeJS project demonstrates how a npusr client sends the initial 
+This sample NodeJS project demonstrates how a npusr client sends the initial
 authorization request to the npuser server. It then prompts the user, on the command line,
 to enter the verification code.  Get and enter the code. The sample app then sends the verification
 request which validates the user.
@@ -18,6 +18,14 @@ The DEV sample should work as is with the defaults used by a locally running npu
 The PROD sample needs real client id and secret and email address.
 
 Adjust the .env files to suit your needs and run the sample ...
+
+## Build
+Need to build to convert Typescript to JS
+```
+npm run build:run
+```
+
+## Run
 ```
 # dev
 npm run run
@@ -28,16 +36,16 @@ npm run run:prod
 
 ## How to obtain the verification code
 
-This sample application sends the authorization request.  You then need to find the 
+This sample application sends the authorization request.  You then need to find the
 verification code the npuser authorization server creaetd.
 
-If you are running this as a developer of npuser then you can see the npuser server's 
-console output. The verification code is there. 
+If you are running this as a developer of npuser then you can see the npuser server's
+console output. The verification code is there.
 
 If you are running this as a developer of an application that will use the npuser server
-then configure this sample to reach out to a running service. You will then need to 
+then configure this sample to reach out to a running service. You will then need to
 modify the sample code to use a real email address that you can access. The verification
-code will appear in your inbox. 
+code will appear in your inbox.
 
 
 ## How was this project created?
