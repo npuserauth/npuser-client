@@ -20,7 +20,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "npm run lint && tsc",
-    "lint": "eslint ./src/**",
+    "lint": "eslint --fix ./src/**",
     "run": "ts-node src/index.ts",
     "test": "mocha test/**/*.spec.js",
     "test:cov": "nyc mocha test/**/*.spec.js",
