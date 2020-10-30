@@ -38,7 +38,6 @@ class NoPasswordAuthorizer {
     this.debug = props.silent !== undefined ? !props.silent : false
     if (props.dev) {
       this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
-
     } else {
       this.baseUrl = this.cfg.baseUrl + '/api/' + URL_BASE_PATH
     }
