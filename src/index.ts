@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import http from 'http'
+import https from 'https'
 
 export type NoPasswordAuthorizerConfig = {
     baseUrl: string; // http://localhost:27001 without trailing slash
@@ -36,6 +37,7 @@ class NoPasswordAuthorizer {
   constructor (props: NoPasswordAuthorizerConfig) {
     this.cfg = props
     this.debug = props.silent !== undefined ? !props.silent : false
+    console.log('npuser create url for dev or prod: ', props.dev ? 'dev' : 'prod')
     if (props.dev) {
       this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
     } else {
@@ -43,18 +45,22 @@ class NoPasswordAuthorizer {
     }
   }
 
-  async sendPost (url, payload) {
+  async sendPost (url: string, payload) {
     const opts = { method: 'POST' }
     const { clientId, sharedSecretKey } = this.cfg
     console.log('npuser sendPost to', url)
     return new Promise((resolve, reject) => {
-      const request = http.request(url, opts, response => {
+      const purl = new URL(url)
+      const transport = purl.protocol === 'https:' ? https : http
+      const request = transport.request(url, opts, response => {
         let str = ''
         response.on('data', chunk => {
+          console.log('npuser recv on-data', chunk)
           str += chunk
         })
 
         response.on('end', () => {
+          console.log('npuser recv on-end', str)
           const json = JSON.parse(str)
           resolve(json)
         })

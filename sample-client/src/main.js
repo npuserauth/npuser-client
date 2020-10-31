@@ -23,7 +23,7 @@ async function main () {
     clientId: config.CLIENT_ID,
     sharedSecretKey: config.SECRET,
     silent: false,
-    dev: true
+    dev: config.DEV === 'true'
   })
 
   const emailAddress = config.USER_EMAIL

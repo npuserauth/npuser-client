@@ -8,7 +8,7 @@
     "build": "webpack --mode=development",
     "build:run": "npm run build && npm run run",
     "run": "cp .env.dev .env && node dist/main.js",
-    "run:prod": "cp .env.prod .env && node dist/main.js"
+    "run:prod": "cp .env.prod .env && npm run build && node dist/main.js"
   },
   "dependencies": {
     "dotenv": "^8.2.0",
