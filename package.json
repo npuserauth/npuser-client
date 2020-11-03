@@ -1,6 +1,6 @@
 {
   "name": "npuser-client",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "Module for a server that uses the npuser service (the no password authentication service).",
   "repository": {
     "type": "git",
