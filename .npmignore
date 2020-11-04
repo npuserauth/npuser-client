@@ -2,3 +2,6 @@ tsconfig.json
 src
 test
 tryit
+.idea/
+coverage
+.nyc_output
