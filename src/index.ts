@@ -61,7 +61,7 @@ class NoPasswordAuthorizer {
 
         response.on('end', () => {
           console.log('npuser recv on-end', str)
-          const json = JSON.parse(str)
+          const json = str.length > 0 ? JSON.parse(str) : { error: 'no response' }
           resolve(json)
         })
       })
@@ -70,6 +70,9 @@ class NoPasswordAuthorizer {
         data: jwt.sign(payload, sharedSecretKey)
       }
       if (this.debug) console.log('npuser client sending: ', signedPayload)
+      request.on('error', (error) => {
+        console.log('npuser request error', error)
+      })
       request.setHeader('Content-Type', 'application/json')
       request.write(JSON.stringify(signedPayload))
       request.end()
