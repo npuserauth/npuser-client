@@ -3,7 +3,7 @@ import http from 'http'
 import https from 'https'
 
 export type NoPasswordAuthorizerConfig = {
-    baseUrl: string; // http://localhost:27001 without trailing slash
+    baseUrl: string; // e.g. http://localhost:27001 without trailing slash
     silent: boolean; // default is to not show debug messages on console
     clientId: string;
     sharedSecretKey: string;
@@ -12,7 +12,6 @@ export type NoPasswordAuthorizerConfig = {
 
 export type AuthResponsePacket = {
     message: string;
-    code: string; // only here temporarily for initial development only
     token: string;
 }
 
@@ -37,7 +36,7 @@ class NoPasswordAuthorizer {
   constructor (props: NoPasswordAuthorizerConfig) {
     this.cfg = props
     this.debug = props.silent !== undefined ? !props.silent : false
-    console.log('npuser create url for dev or prod: ', props.dev ? 'dev' : 'prod')
+    if (this.debug) console.log('npuser create url for dev or prod: ', props.dev ? 'dev' : 'prod')
     if (props.dev) {
       this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
     } else {
@@ -45,23 +44,23 @@ class NoPasswordAuthorizer {
     }
   }
 
-  async sendPost (url: string, payload) {
+  async sendPost (url: string, payload): Promise<object> {
     const opts = { method: 'POST' }
     const { clientId, sharedSecretKey } = this.cfg
-    console.log('npuser sendPost to', url)
+    if (this.debug) console.log('npuser sendPost to', url)
     return new Promise((resolve, reject) => {
       const purl = new URL(url)
       const transport = purl.protocol === 'https:' ? https : http
       const request = transport.request(url, opts, response => {
         let str = ''
         response.on('data', chunk => {
-          console.log('npuser recv on-data', chunk)
+          if (this.debug) console.log('npuser recv on-data', chunk)
           str += chunk
         })
 
         response.on('end', () => {
-          console.log('npuser recv on-end', str)
-          const json = str.length > 0 ? JSON.parse(str) : { error: 'no response' }
+          if (this.debug) console.log('npuser recv on-end', str)
+          const json = JSON.parse(str)
           resolve(json)
         })
       })
@@ -71,7 +70,8 @@ class NoPasswordAuthorizer {
       }
       if (this.debug) console.log('npuser client sending: ', signedPayload)
       request.on('error', (error) => {
-        console.log('npuser request error', error)
+        console.error('npuser client request error', error)
+        reject(error)
       })
       request.setHeader('Content-Type', 'application/json')
       request.write(JSON.stringify(signedPayload))
