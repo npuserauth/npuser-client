@@ -31,26 +31,32 @@ const URL_VALIDATE_SUBPATH = 'validate'
 class NoPasswordAuthorizer {
   private readonly cfg: NoPasswordAuthorizerConfig;
   private readonly verbose: boolean;
-  private readonly baseUrl: string;
+  private readonly authUrl: URL;
+  private readonly validationUrl: URL;
 
   constructor (props: NoPasswordAuthorizerConfig) {
     this.cfg = props
     this.verbose = props.verbose || false
-    if (this.verbose) console.log('npuser create url for dev or prod: ', props.dev ? 'dev' : 'prod')
-    if (props.dev) {
-      this.baseUrl = this.cfg.baseUrl + '/' + URL_BASE_PATH
-    } else {
-      this.baseUrl = this.cfg.baseUrl + '/api/' + URL_BASE_PATH
+    let base = this.cfg.baseUrl
+    if (base.charAt(base.length - 1) === '/') {
+      throw new Error(`NP User Client invalid configuration. Do not add trailing slash to url ${base}`)
     }
+    try {
+      base += '/' + URL_BASE_PATH
+      this.authUrl = new URL(base)
+      this.validationUrl = new URL(base + '/' + URL_VALIDATE_SUBPATH)
+    } catch (e) {
+      throw new Error(`NP User Client invalid baseUrl in configuration. ${base}`)
+    }
+    if (this.verbose) console.log('NPUser-client authUrl ', this.authUrl.href)
   }
 
-  async sendPost (url: string, payload): Promise<object> {
+  async sendPost (url: URL, payload): Promise<object> {
     const opts = { method: 'POST' }
     const { clientId, sharedSecretKey } = this.cfg
-    if (this.verbose) console.log('npuser-client sendPost to', url)
+    if (this.verbose) console.log('NPUser-client sendPost to', url.href)
     return new Promise((resolve, reject) => {
-      const purl = new URL(url)
-      const transport = purl.protocol === 'https:' ? https : http
+      const transport = url.protocol === 'https:' ? https : http
       const request = transport.request(url, opts, response => {
         let str = ''
         response.on('data', chunk => {
@@ -62,9 +68,9 @@ class NoPasswordAuthorizer {
           if (str.length > 0) {
             try {
               json = JSON.parse(str)
-              if (this.verbose) console.log('npuser-client recv on-end', json)
+              if (this.verbose) console.log('NPUser-client recv on-end', json)
             } catch (error) {
-              console.log('npuser-client. Error parsing response', str)
+              if (this.verbose) console.log('NPUser-client. Error parsing response', str)
               return reject(error)
             }
           } else {
@@ -78,9 +84,9 @@ class NoPasswordAuthorizer {
         clientId: clientId,
         data: jwt.sign(payload, sharedSecretKey)
       }
-      if (this.verbose) console.log('npuser-client sending: ', signedPayload)
+      if (this.verbose) console.log('NPUser-client sending: ', signedPayload)
       request.on('error', (error) => {
-        console.error('npuser-client request ERROR:', error.message)
+        console.error('NPUser-client request ERROR:', error.message)
       })
       request.setHeader('Content-Type', 'application/json')
       request.write(JSON.stringify(signedPayload))
@@ -90,21 +96,20 @@ class NoPasswordAuthorizer {
 
   async sendAuth (userEmailAddress): Promise<AuthResponsePacket> {
     const authRequest: AuthRequestPacket = { email: userEmailAddress }
-    const url = this.baseUrl
+    const url = this.authUrl
     const authResponsePacket: AuthResponsePacket = await this.sendPost(url, authRequest) as AuthResponsePacket
-    if (this.verbose) console.log('npuser-client sent auith request to url', this.baseUrl, authResponsePacket)
+    if (this.verbose) console.log('NPUser-client sent auth request to url', url.href, authResponsePacket)
     return authResponsePacket
   }
 
   async sendValidation (userEmailAddress, token, vCode) {
-    const url = this.baseUrl + '/' + URL_VALIDATE_SUBPATH
     const validateRequest: ValidationRequestPacket = {
       email: userEmailAddress,
       code: vCode,
       token: token
     }
-    const validateResponsePacket = await this.sendPost(url, validateRequest)
-    if (this.verbose) console.log('npuser-client sent validate got: ', validateResponsePacket)
+    const validateResponsePacket = await this.sendPost(this.validationUrl, validateRequest)
+    if (this.verbose) console.log('NPUser-client sent validate got: ', validateResponsePacket)
     return validateResponsePacket
   }
 }
