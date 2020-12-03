@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
-import http from 'http'
-import https from 'https'
+import axios, { AxiosRequestConfig } from 'axios'
 
 export type NoPasswordAuthorizerConfig = {
     baseUrl: string; // http://localhost:27001 without trailing slash
@@ -51,47 +50,45 @@ class NoPasswordAuthorizer {
     if (this.verbose) console.log('NPUser-client authUrl ', this.authUrl.href)
   }
 
-  async sendPost (url: URL, payload): Promise<object> {
-    const opts = { method: 'POST' }
-    const { clientId, sharedSecretKey } = this.cfg
+  async sendPost (url: URL, payload) {
     if (this.verbose) console.log('NPUser-client sendPost to', url.href)
-    return new Promise((resolve, reject) => {
-      const transport = url.protocol === 'https:' ? https : http
-      const request = transport.request(url, opts, response => {
-        let str = ''
-        response.on('data', chunk => {
-          str += chunk
-        })
-
-        response.on('end', () => {
-          let json
-          if (str.length > 0) {
-            try {
-              json = JSON.parse(str)
-              if (this.verbose) console.log('NPUser-client recv on-end', json)
-            } catch (error) {
-              if (this.verbose) console.log('NPUser-client. Error parsing response', str)
-              return reject(error)
-            }
-          } else {
-            console.log('No response to np user client request')
-            reject(new Error('No response to np user client request'))
-          }
-          resolve(json)
-        })
+    const { clientId, sharedSecretKey } = this.cfg
+    const signedPayload = {
+      clientId: clientId,
+      data: jwt.sign(payload, sharedSecretKey)
+    }
+    const opts: AxiosRequestConfig = {
+      method: 'POST',
+      url: url.href,
+      data: signedPayload
+    }
+    return axios(opts)
+      .then((response) => {
+        console.log('data', response.data)
+        console.log('status', response.status)
+        console.log('status text', response.statusText)
+        console.log('headers', response.headers)
+        console.log('config', response.config)
+        return Promise.resolve(response.data)
       })
-      const signedPayload = {
-        clientId: clientId,
-        data: jwt.sign(payload, sharedSecretKey)
-      }
-      if (this.verbose) console.log('NPUser-client sending: ', signedPayload)
-      request.on('error', (error) => {
-        console.error('NPUser-client request ERROR:', error.message)
+      .catch(function (error) {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.log(error.response.data)
+          console.log(error.response.status)
+          console.log(error.response.headers)
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of http.ClientRequest in node.js
+          console.log(error.request)
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.log('Error', error.message)
+        }
+        console.log(error.config)
+        return Promise.reject(error)
       })
-      request.setHeader('Content-Type', 'application/json')
-      request.write(JSON.stringify(signedPayload))
-      request.end()
-    })
   }
 
   async sendAuth (userEmailAddress): Promise<AuthResponsePacket> {
@@ -115,3 +112,5 @@ class NoPasswordAuthorizer {
 }
 
 module.exports = NoPasswordAuthorizer
+/*
+ */
