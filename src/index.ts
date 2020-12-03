@@ -34,9 +34,9 @@ class NoPasswordAuthorizer {
   private readonly validationUrl: URL;
 
   constructor (props: NoPasswordAuthorizerConfig) {
-    this.cfg = props
     this.verbose = props.verbose || false
-    let base = this.cfg.baseUrl
+    this.cfg = props
+    let base = props.baseUrl
     if (base.charAt(base.length - 1) === '/') {
       throw new Error(`NP User Client invalid configuration. Do not add trailing slash to url ${base}`)
     }
@@ -52,42 +52,45 @@ class NoPasswordAuthorizer {
 
   async sendPost (url: URL, payload) {
     if (this.verbose) console.log('NPUser-client sendPost to', url.href)
-    const { clientId, sharedSecretKey } = this.cfg
-    const signedPayload = {
-      clientId: clientId,
-      data: jwt.sign(payload, sharedSecretKey)
-    }
+    const verboseDetails = this.verbose || false
     const opts: AxiosRequestConfig = {
       method: 'POST',
       url: url.href,
-      data: signedPayload
+      data: {
+        clientId: this.cfg.clientId,
+        data: jwt.sign(payload, this.cfg.sharedSecretKey)
+      }
     }
     return axios(opts)
       .then((response) => {
-        console.log('data', response.data)
-        console.log('status', response.status)
-        console.log('status text', response.statusText)
-        console.log('headers', response.headers)
-        console.log('config', response.config)
+        if (verboseDetails) {
+          console.log('data', response.data)
+          console.log('status', response.status)
+          console.log('status text', response.statusText)
+          console.log('headers', response.headers)
+          console.log('config', response.config)
+        }
         return Promise.resolve(response.data)
       })
       .catch(function (error) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          console.log(error.response.data)
-          console.log(error.response.status)
-          console.log(error.response.headers)
+          if (verboseDetails) {
+            console.log(error.response.data)
+            console.log(error.response.status)
+            console.log(error.response.headers)
+          }
+          return Promise.reject(error.response.data)
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of http.ClientRequest in node.js
-          console.log(error.request)
+          if (verboseDetails) console.log(error.request)
         } else {
           // Something happened in setting up the request that triggered an Error
-          console.log('Error', error.message)
+          if (verboseDetails) console.log('Error', error.message)
         }
-        console.log(error.config)
-        return Promise.reject(error)
+        return Promise.reject(error.message)
       })
   }
 
