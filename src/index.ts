@@ -6,28 +6,39 @@ export type NoPasswordAuthorizerConfig = {
     verbose: boolean; // default (undefined) is to not be verbose
     clientId: string;
     sharedSecretKey: string;
-    dev: boolean;
 }
 
-export type AuthResponsePacket = {
-    message: string;
-    token: string;
-}
-
-export type AuthRequestPacket = {
+export type AuthRequest = {
     email: string;
 }
 
-export type ValidationRequestPacket = {
+export type ValidationRequest = {
     email: string;
     code: string;
     token: string;
 }
 
+/**
+ * Shape of the response to the auth request.  This definition is replicated in the npuser client.
+ */
+export type AuthResponse = {
+  message: string;
+  token: string;
+  code?: string; // only present if testing is set true in auth request
+}
+
+/**
+ * Shape of the response to the validate request.  This definition is replicated in the npuser client.
+ */
+export type ValidateResponse = {
+  message: string;
+  jwt: string;
+}
+
 const URL_BASE_PATH = 'apiuser'
 const URL_VALIDATE_SUBPATH = 'validate'
 
-class NoPasswordAuthorizer {
+export class NoPasswordAuthorizer {
   private readonly cfg: NoPasswordAuthorizerConfig;
   private readonly verbose: boolean;
   private readonly authUrl: URL;
@@ -52,7 +63,6 @@ class NoPasswordAuthorizer {
 
   async sendPost (url: URL, payload) {
     if (this.verbose) console.log('NPUser-client sendPost to', url.href)
-    const verboseDetails = this.verbose || false
     const opts: AxiosRequestConfig = {
       method: 'POST',
       url: url.href,
@@ -63,57 +73,41 @@ class NoPasswordAuthorizer {
     }
     return axios(opts)
       .then((response) => {
-        if (verboseDetails) {
-          console.log('data', response.data)
-          console.log('status', response.status)
-          console.log('status text', response.statusText)
-          console.log('headers', response.headers)
-          console.log('config', response.config)
-        }
         return Promise.resolve(response.data)
       })
-      .catch(function (error) {
+      .catch((error) => {
+        if (this.verbose) console.log(error.message)
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          if (verboseDetails) {
-            console.log(error.response.data)
-            console.log(error.response.status)
-            console.log(error.response.headers)
-          }
           return Promise.reject(error.response.data)
-        } else if (error.request) {
-          // The request was made but no response was received
-          // `error.request` is an instance of http.ClientRequest in node.js
-          if (verboseDetails) console.log(error.request)
-        } else {
-          // Something happened in setting up the request that triggered an Error
-          if (verboseDetails) console.log('Error', error.message)
         }
-        return Promise.reject(error.message)
+        // else
+        return Promise.reject(error)
       })
   }
 
-  async sendAuth (userEmailAddress): Promise<AuthResponsePacket> {
-    const authRequest: AuthRequestPacket = { email: userEmailAddress }
+  async sendAuth (userEmailAddress): Promise<AuthResponse> {
+    const authRequest: AuthRequest = { email: userEmailAddress }
     const url = this.authUrl
-    const authResponsePacket: AuthResponsePacket = await this.sendPost(url, authRequest) as AuthResponsePacket
-    if (this.verbose) console.log('NPUser-client sent auth request to url', url.href, authResponsePacket)
-    return authResponsePacket
+    const response: AuthResponse = await this.sendPost(url, authRequest) as AuthResponse
+    if (this.verbose) console.log('NPUser-client sent auth request got', response)
+    return response
   }
 
-  async sendValidation (userEmailAddress, token, vCode) {
-    const validateRequest: ValidationRequestPacket = {
+  async sendValidation (userEmailAddress, token, vCode): Promise<ValidateResponse> {
+    const url = this.validationUrl
+    const vr: ValidationRequest = {
       email: userEmailAddress,
       code: vCode,
       token: token
     }
-    const validateResponsePacket = await this.sendPost(this.validationUrl, validateRequest)
-    if (this.verbose) console.log('NPUser-client sent validate got: ', validateResponsePacket)
-    return validateResponsePacket
+    const response:ValidateResponse = await this.sendPost(url, vr) as ValidateResponse
+    if (this.verbose) console.log('NPUser-client sent validate got: ', response)
+    return response
   }
 }
 
-module.exports = NoPasswordAuthorizer
+// module.exports = NoPasswordAuthorizer
 /*
  */
