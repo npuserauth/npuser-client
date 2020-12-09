@@ -49,20 +49,20 @@ export class NoPasswordAuthorizer {
     this.cfg = props
     let base = props.baseUrl
     if (base.charAt(base.length - 1) === '/') {
-      throw new Error(`NP User Client invalid configuration. Do not add trailing slash to url ${base}`)
+      throw new Error(`npuser-client invalid configuration. Do not add trailing slash to url ${base}`)
     }
     try {
       base += '/' + URL_BASE_PATH
       this.authUrl = new URL(base)
       this.validationUrl = new URL(base + '/' + URL_VALIDATE_SUBPATH)
     } catch (e) {
-      throw new Error(`NP User Client invalid baseUrl in configuration. ${base}`)
+      throw new Error(`npuser-client invalid baseUrl in configuration. ${base}`)
     }
-    if (this.verbose) console.log('NPUser-client authUrl ', this.authUrl.href)
+    if (this.verbose) console.log('npuser-client authUrl ', this.authUrl.href)
   }
 
   async sendPost (url: URL, payload) {
-    if (this.verbose) console.log('NPUser-client sendPost to', url.href)
+    if (this.verbose) console.log('npuser-client sendPost to', url.href)
     const opts: AxiosRequestConfig = {
       method: 'POST',
       url: url.href,
@@ -76,7 +76,7 @@ export class NoPasswordAuthorizer {
         return Promise.resolve(response.data)
       })
       .catch((error) => {
-        if (this.verbose) console.log(error.message)
+        if (this.verbose) console.log('npuser-client error', error.message)
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
@@ -91,7 +91,7 @@ export class NoPasswordAuthorizer {
     const authRequest: AuthRequest = { email: userEmailAddress }
     const url = this.authUrl
     const response: AuthResponse = await this.sendPost(url, authRequest) as AuthResponse
-    if (this.verbose) console.log('NPUser-client sent auth request got', response)
+    if (this.verbose) console.log('npuser-client sent auth request got', response)
     return response
   }
 
@@ -103,11 +103,7 @@ export class NoPasswordAuthorizer {
       token: token
     }
     const response:ValidateResponse = await this.sendPost(url, vr) as ValidateResponse
-    if (this.verbose) console.log('NPUser-client sent validate got: ', response)
+    if (this.verbose) console.log('npuser-client sent validate got: ', response)
     return response
   }
 }
-
-// module.exports = NoPasswordAuthorizer
-/*
- */
