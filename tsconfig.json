@@ -2,7 +2,9 @@
   "compilerOptions": {
     "module": "commonjs",
     "target": "es6",
-    "types": ["node"],
+    "types": ["node", "jest"],
+    "moduleResolution": "node",
+    "sourceMap": true,
     "esModuleInterop": true,
     "declaration": true,
     "outDir": "./dist"

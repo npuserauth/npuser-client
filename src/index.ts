@@ -3,9 +3,9 @@ import axios, { AxiosRequestConfig } from 'axios'
 
 export type NoPasswordAuthorizerConfig = {
     baseUrl: string; // http://localhost:27001 without trailing slash
-    verbose: boolean; // default (undefined) is to not be verbose
     clientId: string;
     sharedSecretKey: string;
+    verbose?: boolean; // default (undefined) is to not be verbose
 }
 
 export type AuthRequest = {

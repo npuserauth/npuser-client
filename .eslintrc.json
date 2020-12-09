@@ -1,19 +1,19 @@
 {
     "env": {
         "node": true,
-        "mocha": true,
-        "es2021": true
+        "es2021": true,
+        "jest/globals": true
     },
     "extends": [
         "standard"
     ],
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
-        "ecmaVersion": 2015,
+        "ecmaVersion": 2020,
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint", "jest"
     ],
     "rules": {
     }

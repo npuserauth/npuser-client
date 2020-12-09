@@ -1,6 +1,5 @@
-const NoPasswordAuthorizer = require('../dist/index')
+import { NoPasswordAuthorizer } from '../dist/index'
 const nock = require('nock')
-const expect = require('chai').expect
 
 const hostUrl = 'http://localhost:27001'
 const emailAddress = 'bg@g.c'
@@ -10,7 +9,7 @@ function constructNP () {
     baseUrl: hostUrl,
     clientId: 'client id with np user',
     sharedSecretKey: 'some secret shared with np user',
-    dev: true
+    verbose: false
   })
 }
 
@@ -27,7 +26,7 @@ const code = 'tbd'
 describe('Constructor test', () => {
   it('Should be able to create an instance', () => {
     const np = constructNP()
-    expect(typeof np).to.equal('object')
+    expect(typeof np).toBe('object')
   })
 })
 
@@ -40,7 +39,7 @@ describe('Send auth request', () => {
 
     const r = await np.sendAuth(emailAddress)
     // eslint-disable-next-line no-unused-expressions
-    expect(r).exist
+    expect(r).toBeDefined()
   })
 })
 
@@ -53,6 +52,6 @@ describe('Send validation request', () => {
 
     const v = await np.sendValidation(emailAddress, validationToken, code)
     // eslint-disable-next-line no-unused-expressions
-    expect(v).exist
+    expect(v).toBeDefined()
   })
 })
