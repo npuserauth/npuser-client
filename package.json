@@ -37,7 +37,7 @@
     "postversion": "will run after the commit has been made. A perfect place for pushing the commit as well as the tag."
   },
   "dependencies": {
-    "http": "0.0.1-security",
+    "axios": "^0.21.0",
     "jsonwebtoken": "^8.5.1"
   },
   "devDependencies": {

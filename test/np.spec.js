@@ -32,7 +32,7 @@ describe('Constructor test', () => {
 })
 
 describe('Send auth request', () => {
-  it('should be about to post auth', async () => {
+  it('should be able to post auth', async () => {
     const np = constructNP()
     nock(hostUrl)
       .post('/apiuser')
